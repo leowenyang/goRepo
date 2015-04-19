@@ -8,9 +8,11 @@ import (
 	"net/http/httputil"
 )
 
+var runOnce = 1
+
 func main() {
 	server := http.Server{
-		Addr:    ":8989",
+		Addr:    ":8080",
 		Handler: &myHandler{},
 	}
 	server.ListenAndServe()
@@ -28,9 +30,11 @@ func (*myHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(string(request))
 
 	// create client to get site
-	client := http.Client{}
+	tr := &http.Transport{}
+	//client := http.Client{}
 	r.RequestURI = "" // pay attention : it is very important
-	response, err := client.Do(r)
+	//response, err := client.Do(r)
+	response, err := tr.RoundTrip(r)
 	if err != nil {
 		log.Panic(err, "not get response")
 	}
